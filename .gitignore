@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log
+package-lock.json
+
+.nyc_output/
+coverage/
+test/fixtures/.lounge/storage/
+
+# Built assets created at npm install/prepublish time
+# See https://docs.npmjs.com/misc/scripts
+client/fonts/
+client/js/bundle.js
+client/js/bundle.js.map
+client/js/bundle.vendor.js
+client/js/bundle.vendor.js.map
