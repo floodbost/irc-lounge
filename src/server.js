@@ -16,6 +16,8 @@ var colors = require("colors/safe");
 const net = require("net");
 const Identification = require("./identification");
 var os = require('os');
+const isIp = require('is-ip');
+
 
 
 var manager = null;
@@ -176,7 +178,7 @@ function index(req, res, next) {
 	for(var i in getInterfaces) {
 		if (i == 'lo') continue;
 		getInterfaces[i].forEach(function(addr) {
-			if (!addr.address.match('fe80') && (!addr.address.match(/c13$/gi) || !addr.address.match(/c12$/gi))) {
+			if (!addr.address.match('fe80') && !isIp.v4(addr.address) && addr.address.match(/^2001:470:ee2a::c/gi)) {
 				interfaces.push(addr.address);
 			}
 			//console.log(addr);

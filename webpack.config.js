@@ -2,6 +2,8 @@
 
 const webpack = require("webpack");
 const path = require("path");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 
 // ********************
 // Common configuration
@@ -43,7 +45,7 @@ const config = {
 					path.resolve(__dirname, "client/views"),
 				],
 				use: {
-					loader: "handlebars-loader",
+					loader: "@icetee/handlebars-loader",
 					options: {
 						helperDirs: [
 							path.resolve(__dirname, "client/js/libs/handlebars")
@@ -61,13 +63,37 @@ const config = {
 	},
 	plugins: [
 		// socket.io uses debug, we don't need it
-		new webpack.NormalModuleReplacementPlugin(/debug/, path.resolve(__dirname, "scripts/noop.js")),
+		//new webpack.NormalModuleReplacementPlugin(/debug/, path.resolve(__dirname, "scripts/noop.js")),
 		// automatically split all vendor dependancies into a separate bundle
-		new webpack.optimize.CommonsChunkPlugin({
+		/*new webpack.optimize.CommonsChunkPlugin({
 			name: "js/bundle.vendor.js",
 			minChunks: (module) => module.context && module.context.indexOf("node_modules") !== -1
-		})
-	]
+		})*/
+	],
+	optimization: {
+		splitChunks: {
+		  chunks: 'async',
+		  minSize: 20000,
+		  maxSize: 0,
+		  minChunks: 1,
+		  maxAsyncRequests: 30,
+		  maxInitialRequests: 30,
+		  automaticNameDelimiter: '~',
+		  enforceSizeThreshold: 50000,
+		  cacheGroups: {
+			defaultVendors: {
+			  test: /[\\/]node_modules[\\/]/,
+			  priority: -10
+			},
+			default: {
+			  minChunks: 2,
+			  priority: -20,
+			  reuseExistingChunk: true
+			}
+		  }
+		},
+		 minimizer: [new UglifyJsPlugin()],
+	}
 };
 
 // *********************************
@@ -75,10 +101,10 @@ const config = {
 // *********************************
 
 if (process.env.NODE_ENV === "production") {
-	config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+	/*config.plugins.push(new webpack.optimize.UglifyJsPlugin({
 		sourceMap: true,
 		comments: false
-	}));
+	}));*/
 } else {
 	console.log("Building in development mode, bundles will not be minified.");
 }
